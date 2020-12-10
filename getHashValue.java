@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class getHashValue {
     //获取文件的hash值（不提供外部调用）
@@ -24,24 +25,17 @@ public class getHashValue {
 
     //获取文件夹的hash值（不提供外部调用）
     private static String getHashOfDirectory(File file) throws Exception {
-        //创建MessageDigest
-        MessageDigest complete = MessageDigest.getInstance("SHA-1");
         StringBuilder tempFile = new StringBuilder();
         File[] files = file.listFiles();
         for (File f: files){
             //将下属文件条目更新到Tree文件
             updateEntry(f,tempFile);
         }
-        byte[] buffer = tempFile.toString().getBytes();
-        complete.update(buffer,0, buffer.length);
-        //将计算出的hash值转换为16进制输出
-        return getHashValueFromMessageDigest(complete);
+        return getHashValueFromStringBuilder(tempFile);
     }
 
     //获取主文件夹的hash值（不提供外部调用）
     public static String getHashOfHomeFolder(File file) throws Exception {
-        //创建MessageDigest
-        MessageDigest complete = MessageDigest.getInstance("SHA-1");
         StringBuilder tempFile = new StringBuilder();
         File[] files = file.listFiles();
         for (File f: files) {
@@ -49,13 +43,10 @@ public class getHashValue {
             if (!f.getName().equals(".versionManagement"))
                 updateEntry(f,tempFile);
         }
-        byte[] buffer = tempFile.toString().getBytes();
-        complete.update(buffer,0, buffer.length);
-        //将计算出的hash值转换为16进制输出
-        return getHashValueFromMessageDigest(complete);
+        return getHashValueFromStringBuilder(tempFile);
     }
 
-    //获得子文件的可以写入Tree文件的条目
+    //获得子文件的可以写入Tree文件的条目（不提供外部调用）
     private static void updateEntry(File f,StringBuilder tempFile)throws Exception{
         byte fileType[] = new byte[6];
         //是文件夹，保存为Tree
@@ -79,6 +70,16 @@ public class getHashValue {
         byte filename[] = ("  " + f.getName() + "\n").getBytes();
         for (byte i : filename)
             tempFile.append(i);
+    }
+
+    //从StringBuilder中计算hash值不提供外部调用）
+    private static String getHashValueFromStringBuilder(StringBuilder tempFile) throws NoSuchAlgorithmException {
+        byte[] buffer = tempFile.toString().getBytes();
+        //创建MessageDigest
+        MessageDigest complete = MessageDigest.getInstance("SHA-1");
+        complete.update(buffer,0, buffer.length);
+        //将计算出的hash值转换为16进制输出
+        return getHashValueFromMessageDigest(complete);
     }
 
     //将消息队列中的hash值取出（不提供外部调用）
