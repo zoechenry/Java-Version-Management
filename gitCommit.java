@@ -27,19 +27,6 @@ public class gitCommit {
         }
     }
 
-    // 更改文件的名字
-    public static boolean rename(final File file, final String newName) {
-        // file is null then return false
-        if (file == null) return false;
-        // file doesn't exist then return false
-        if (!file.exists()) return false;
-        // the new name equals old name then return true
-        if (newName.equals(file.getName())) return true;
-        File newFile = new File(file.getParent() + File.separator + newName);
-        // the new name of file exists then return false
-        return !newFile.exists() && file.renameTo(newFile);
-    }
-
     public static <Stirng> boolean commit(String filePath)throws Exception{
         // 在.versionManagement下记录commit
         String logpath = filePath + "\\.versionManagement";
@@ -47,7 +34,7 @@ public class gitCommit {
         // 保存Head的Hash值
         String hashOfHomeFolder = KeyValueStorage.createKeyValueOfPath(filePath);
         try{
-        // 检查.log中最新commit存储的Hash值，如果不同再进行新的commit
+        // 检查最新commit存储的Hash值，如果不同再进行新的commit
             // 首先找到最新的commit
             String latestFilename = latestCommit(logpath);  // 找到log中最新一次提交的文件
             if(latestFilename==null){
@@ -58,29 +45,8 @@ public class gitCommit {
             }
 
             if(!hashOfHomeFolder.equals(latestHash)){
-                BufferedWriter out = new BufferedWriter(new FileWriter(logpath + "\\newCommit"));
-                // 需要写入：tree对象的key；前驱commit对象的key；时间戳；备注
-                // 写入备注:
-                System.out.println("请输入备注：");
-                Scanner input = new Scanner(System.in);
-                String commitNote = input.nextLine();
-
-                out.write("hashOfHomeFolder: " + hashOfHomeFolder + "\n"); // tree对象key
-                out.write("Parent: " + latestFilename + "\n"); // 没有前驱commit，设为NULL
-                out.write("Timestamp: " + (int) System.currentTimeMillis() + "\n"); // 时间戳
-                out.write("Note: " + commitNote + "\n"); // 备注
-                out.close();
-
-                // 把文件名字改为commit的key
-                File newFile = new File(logpath + "\\newCommit");
-                String commitHash = getHashValue.getHash(newFile);
-                rename(newFile, commitHash);
-
-                // 更新（创建）HEAD文件，存储这次commit的Key
-                BufferedWriter headOut = new BufferedWriter(new FileWriter(logpath + "\\HEAD"));
-                headOut.write(commitHash);
-                headOut.close();
-
+                String commitHash = KeyValueStorage.createCommitLog(hashOfHomeFolder, latestFilename, logpath);
+                KeyValueStorage.createHead(commitHash,logpath);  // 更新（创建）HEAD文件，存储这次commit的Key
                 System.out.println("更新成功！");
                 return true;
             }

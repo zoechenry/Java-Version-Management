@@ -1,5 +1,6 @@
 import java.io.*;
 import java.nio.file.NoSuchFileException;
+import java.util.Scanner;
 
 
 public class KeyValueStorage {
@@ -152,5 +153,38 @@ public class KeyValueStorage {
             }
         //没找到对应的文件，返回一个临时的空文件
         return (new File(storagePath,"temp"));
+    }
+
+    // 创建commit记录， 返回commit的key
+    public static String createCommitLog(String hashOfHomeFolder, String latestFilename, String storagePath) throws Exception {
+        StringBuilder out = new StringBuilder();
+        // 需要写入：tree对象的key；前驱commit对象的key；时间戳；备注
+        // 写入备注:
+        System.out.println("请输入备注：");
+        Scanner input = new Scanner(System.in);
+        String commitNote = input.nextLine();
+
+        out.append("hashOfHomeFolder: " + hashOfHomeFolder + "\n"); // tree对象key
+        out.append("Parent: " + latestFilename + "\n"); // 没有前驱commit，设为NULL
+        out.append("Timestamp: " + (int) System.currentTimeMillis() + "\n"); // 时间戳
+        out.append("Note: " + commitNote + "\n"); // 备注
+
+        // 获得Hash值
+        String commitHash = getHashValue.getHashValueFromStringBuilder(out);
+
+        // 把文件名字改为commit的key
+        File f = new File(storagePath+"\\"+commitHash);
+        BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+        bw.write(out.toString());
+        bw.flush();
+        bw.close();
+        return commitHash;
+    }
+
+    // 更新（创建）HEAD文件，存储这次commit的Key
+    public static void createHead(String commitHash, String storagePath) throws IOException {
+        BufferedWriter headOut = new BufferedWriter(new FileWriter(storagePath + "\\HEAD"));
+        headOut.write(commitHash);
+        headOut.close();
     }
 }
