@@ -6,11 +6,14 @@ import java.security.NoSuchAlgorithmException;
 public class getHashValue {
 
     /*
-    该类仅提供一个外部接口：
+    该类提供2个外部接口：
     public static String getHash(File file)
     对于打开的文件，获得其hash值并返回。
     该方法会自动判定这个文件是一个文件还是一个文件夹。
     请确保文件是真实存在的，否则会报错。
+
+     public static String getHashValueFromStringBuilder(StringBuilder tempFile)
+     输入StringBuilder返回hash值
      */
 
     //获取文件的hash值（不提供外部调用）
@@ -70,8 +73,8 @@ public class getHashValue {
             tempFile.append(i);
     }
 
-    //从StringBuilder中计算hash值（不提供外部调用）
-    private static String getHashValueFromStringBuilder(StringBuilder tempFile) throws NoSuchAlgorithmException {
+    //从StringBuilder中计算hash值
+    public static String getHashValueFromStringBuilder(StringBuilder tempFile) throws NoSuchAlgorithmException {
         byte[] buffer = tempFile.toString().getBytes();
         //创建MessageDigest
         MessageDigest complete = MessageDigest.getInstance("SHA-1");
