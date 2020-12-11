@@ -4,6 +4,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class getHashValue {
+
+    /*
+    该类仅提供一个外部接口：
+    public static String getHash(File file)
+    对于打开的文件，获得其hash值并返回。
+    该方法会自动判定这个文件是一个文件还是一个文件夹。
+    请确保文件是真实存在的，否则会报错。
+     */
+
     //获取文件的hash值（不提供外部调用）
     private static String getHashOfFile(File file) throws Exception{
         //创建MessageDigest
@@ -28,17 +37,6 @@ public class getHashValue {
         StringBuilder tempFile = new StringBuilder();
         File[] files = file.listFiles();
         for (File f: files){
-            //将下属文件条目更新到Tree文件
-            updateEntry(f,tempFile);
-        }
-        return getHashValueFromStringBuilder(tempFile);
-    }
-
-    //获取主文件夹的hash值（不提供外部调用）
-    public static String getHashOfHomeFolder(File file) throws Exception {
-        StringBuilder tempFile = new StringBuilder();
-        File[] files = file.listFiles();
-        for (File f: files) {
             //将下属的不是版本管理文件夹的文件条目更新到Tree文件
             if (!f.getName().equals(".versionManagement"))
                 updateEntry(f,tempFile);
@@ -72,7 +70,7 @@ public class getHashValue {
             tempFile.append(i);
     }
 
-    //从StringBuilder中计算hash值不提供外部调用）
+    //从StringBuilder中计算hash值（不提供外部调用）
     private static String getHashValueFromStringBuilder(StringBuilder tempFile) throws NoSuchAlgorithmException {
         byte[] buffer = tempFile.toString().getBytes();
         //创建MessageDigest
@@ -94,7 +92,7 @@ public class getHashValue {
         return result.toString();
     }
 
-    //整合的计算hash值的方法（提供外部调用）
+    //整合的计算hash值的方法（可调用）
     public static String getHash(File file) throws Exception {
         if(file.isFile())
             return getHashOfFile(file);
