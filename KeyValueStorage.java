@@ -20,7 +20,7 @@ public class KeyValueStorage {
      */
 
     //创建Tree模块的Key-Value文件（不提供外部调用）
-    private static String creatTreeKeyValueFile(File file,String storagePath) throws Exception {
+    private static String createTreeKeyValueFile(File file,String storagePath) throws Exception {
         //获取对应的hash值
         String hashValue = getHashValue.getHash(file);
         //新建文件
@@ -80,33 +80,33 @@ public class KeyValueStorage {
     }
 
     //添加对应的key-value存储（不提供外部调用）
-    private static void creatKeyValueFile(File file, String storagePath) throws Exception {
+    private static void createKeyValueFile(File file, String storagePath) throws Exception {
         if (file.isDirectory())
-            creatTreeKeyValueFile(file, storagePath);
+            createTreeKeyValueFile(file, storagePath);
         else
             createBlobKeyValueFile(file, storagePath);
     }
 
     //利用递归，保存所属的全部文件与文件夹的key-value文件（不提供外部调用）
-    private static void creatAllKeyValueFile(File file,String storagePath) throws Exception{
+    private static void createAllKeyValueFile(File file,String storagePath) throws Exception{
         //若输入为文件夹,创建文件夹的key-value文件，并递归创建每一个子文件的key-value文件
         if(file.isDirectory()){
             File[] files = file.listFiles();
             //递归创建每一个子文件的key-value文件
             for (File f: files) {
                 if (!f.getName().equals(".versionManagement"))
-                    creatAllKeyValueFile(f, storagePath);
+                    createAllKeyValueFile(f, storagePath);
             }
             //创建文件夹的key-value文件
-            creatKeyValueFile(file,storagePath);
+            createKeyValueFile(file,storagePath);
         }
         else if (file.isFile())
             //基类，创建文件的key-value文件
-            creatKeyValueFile(file,storagePath);
+            createKeyValueFile(file,storagePath);
     }
 
     //对于仓库的版本管理的集成接口，对仓库生成key-value文件，并返回仓库的key值（可调用）
-    public static String creatKeyValueOfPath(String filePath)throws Exception{
+    public static String createKeyValueOfPath(String filePath)throws Exception{
         //若是无效文件夹路径，则抛出异常
         File file = new File(filePath);
         if (!file.exists()||!file.isDirectory())
@@ -120,10 +120,10 @@ public class KeyValueStorage {
         //递归创建除了版本管理文件夹".versionManagement"每一个附属文件的key-value文件
         for (File f: files) {
             if (!f.getName().equals(".versionManagement"))
-                creatAllKeyValueFile(f, storagePath);
+                createAllKeyValueFile(f, storagePath);
         }
         //创建主文件夹的key-value文件并返回其hash值
-        return creatTreeKeyValueFile(file,storagePath);
+        return createTreeKeyValueFile(file,storagePath);
     }
 
     //判断给定的key是否对应一个有效的key-value文件（可调用）
@@ -133,7 +133,7 @@ public class KeyValueStorage {
         File[] files = keyValueFile.listFiles();
         for (File f: files)
             //若找到key对应的文件，则返回True
-            if(f.getName()==key) {
+            if(f.getName().equals(key)) {
                 return true;
             }
         //没有找到，返回false
@@ -147,7 +147,7 @@ public class KeyValueStorage {
         File[] files = keyValueFile.listFiles();
         for (File f: files)
             //若找到key对应的文件，则返回这个文件
-            if(f.getName()==key) {
+            if(f.getName().equals(key)) {
                 return f;
             }
         //没找到对应的文件，返回一个临时的空文件
