@@ -38,7 +38,7 @@ public class VersionManagement {
             versionManagement.mkdir();//若还没有创建".versionManagement"文件夹，则创建一个
     }
 
-    public void commit() throws Exception {
-        new Commit(warehouse, storagePath);
+    public Commit commit() throws Exception {
+        return new Commit(warehouse, storagePath);
     }
 }
