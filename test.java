@@ -1,4 +1,4 @@
-public class test {
+public class Test {
 
     /*
     该测试类用于测试各个模块是否能正常运行，现在还比较简陋。

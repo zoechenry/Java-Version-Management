@@ -1,8 +1,6 @@
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 
-public class Tree extends key_value{
+public class Tree extends KeyValue {
 
       /*
     继承自虚类key_value
@@ -15,27 +13,19 @@ public class Tree extends key_value{
 
     public Tree(File inputFile, String storagePath) throws Exception {
         super(inputFile, storagePath);
-        createTree();
-    }
-
-    //创建Tree模块的Key-Value文件
-    private void createTree() throws Exception{
-        value = new StringBuilder();
         updateValue();//更新Tree的value
-        key.setHashValue(value);//计算hash值
-        File keyValueFile = new File(storagePath, getKey());//创建Tree文件
-        BufferedWriter bw = new BufferedWriter(new FileWriter(keyValueFile));
-        bw.write(value.toString());
-        bw.flush();
-        bw.close();
+        createKeyValue(value);
     }
 
     //更新Tree的value
     private void updateValue()throws Exception{
+        value = new StringBuilder();
         File[] files = inputFile.listFiles();
-        for (File f : files)
-            if (!f.getName().equals(".versionManagement"))
-                updateEntry(f);//将下属的不是版本管理文件夹的文件条目更新到value中，同时递归创建子文件的key-value
+        if(files!=null) {
+            for (File f : files)
+                if (!f.getName().equals(".versionManagement"))
+                    updateEntry(f);//将下属的不是版本管理文件夹的文件条目更新到value中，同时递归创建子文件的key-value
+        }
     }
 
     //更新value条目

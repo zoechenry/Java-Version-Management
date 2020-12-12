@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.Scanner;
 
-public class Commit extends key_value{
+public class Commit extends KeyValue {
 
       /*
     继承自虚类key_value
@@ -18,7 +18,9 @@ public class Commit extends key_value{
     public Commit(File inputFile, String storagePath) throws Exception {
         super(inputFile, storagePath);
         if (isValidCommit()) {//判断此次commit是否合法
-            createCommit();
+            updateValue();//更新commit的value
+            createKeyValue(value);
+            createHead();  // 更新（创建）HEAD文件，存储这次commit的Key
             System.out.println("更新成功！");
         } else
             System.out.println("无变化，不进行更新！");
@@ -26,52 +28,15 @@ public class Commit extends key_value{
 
     // 判断该次的commit是否合法，及和上次相比HashOfHomeFolder是否有变化
     private boolean isValidCommit() throws Exception {
-        String latestKeyOfHomeFolder = getLatestKeyOfHomeFolder();//获取上一次commit的仓库key值
+        latestCommit = getLatestCommit();
+        String latestKeyOfHomeFolder = getLatestKeyOfHomeFolder(latestCommit);//获取上一次commit的仓库key值
         hashOfHomeFolder = new Tree(inputFile,storagePath).getKey();//获取当前的仓库key值
         return !hashOfHomeFolder.equals(latestKeyOfHomeFolder);
     }
 
-    //获取上一次commit的仓库key值
-    private String getLatestKeyOfHomeFolder() throws IOException {
-        getLatestCommit();//获取前一次commit的key值
-        if (latestCommit == null) {
-            return null;//不存在前一次commit则latestHashOfHomeFolder为null
-        } else {
-            File latestCommitFile = new File(storagePath + "\\" + latestCommit);//打开上一次的commit文件
-            InputStreamReader isr = new InputStreamReader(new FileInputStream(latestCommitFile));
-            BufferedReader br = new BufferedReader(isr);
-            String[] hashSplit = br.readLine().split(": ");//读取latestHashOfHomeFolder
-            return hashSplit[hashSplit.length - 1];
-        }
-    }
-
-    //从Head文件中获取最新一次commit的key值
-    private void getLatestCommit() throws IOException {
-        File HEADFile = new File(storagePath + "\\HEAD");
-        if(!HEADFile.exists())
-            latestCommit = null;//Head文件不存在，说明没有parent commit，commitLatest为null
-        else{
-            InputStreamReader isr = new InputStreamReader(new FileInputStream(HEADFile));
-            BufferedReader br = new BufferedReader(isr);
-            latestCommit = br.readLine();
-        }
-    }
-
-    //创建commit模块的key-value文件
-    private void createCommit() throws Exception {
-        value = new StringBuilder();
-        updateValue();//更新commit的value
-        key.setHashValue(value);// 计算hash值
-        File keyValueFile = new File(storagePath,getKey());
-        BufferedWriter bw = new BufferedWriter(new FileWriter(keyValueFile));
-        bw.write(value.toString());
-        bw.flush();
-        bw.close();
-        createHead();  // 更新（创建）HEAD文件，存储这次commit的Key
-    }
-
     //更新commit的value
     private void updateValue(){
+        value = new StringBuilder();
         System.out.println("请输入备注："); // 写入备注:
         Scanner input = new Scanner(System.in);
         String commitNote = input.nextLine();
@@ -81,11 +46,4 @@ public class Commit extends key_value{
         value.append("Note: ").append(commitNote).append("\n"); // 备注
     }
 
-    // 更新（创建）HEAD文件，存储这次commit的Key
-    public void createHead() throws IOException {
-        BufferedWriter headOut = new BufferedWriter(new FileWriter(storagePath + "\\HEAD"));
-        headOut.write(getKey());
-        headOut.flush();
-        headOut.close();
-    }
 }
