@@ -32,7 +32,7 @@ public class Commit extends key_value{
     }
 
     //获取上一次commit的仓库key值
-    private String getLatestKeyOfHomeFolder() throws IOException {
+    public String getLatestKeyOfHomeFolder() throws IOException {
         getLatestCommit();//获取前一次commit的key值
         if (latestCommit == null) {
             return null;//不存在前一次commit则latestHashOfHomeFolder为null
