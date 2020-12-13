@@ -38,7 +38,8 @@ public class VersionManagement {
             versionManagement.mkdir();//若还没有创建".versionManagement"文件夹，则创建一个
     }
 
-    public Commit commit() throws Exception {
-        return new Commit(warehouse, storagePath);
+    public String commit() throws Exception {
+        Commit cmt = new Commit(warehouse, storagePath);
+        return cmt.getLatestKeyOfHomeFolder(cmt.getLatestCommit());
     }
 }

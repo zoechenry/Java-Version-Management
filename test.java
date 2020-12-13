@@ -15,24 +15,23 @@ public class test {
 
     private final String filePath; // 用于存储仓库.versionManagement的路径
     private static String latestCommit; // 用于存储最新的提交记录
-    private String filenameStorage; // 用于存储文件与文件夹的名字
+    private StringBuilder filenameStorage; // 用于存储文件与文件夹的名字
 
     // 初始化test对象时，保证有一次最新的提交
     public test(String storagePath) throws Exception {
-        filenameStorage = null;
+        filenameStorage = new StringBuilder();
         filePath = storagePath + "\\.versionManagement";;
         // 创建一个.versionManagement文件夹
         VersionManagement folder = new VersionManagement(storagePath);
-        // 提交一次commit
-        Commit newCommit = folder.commit();
-        // 找到最新的commit记录，读取文件，获得tree对象的Hash值
-        latestCommit = newCommit.getLatestKeyOfHomeFolder();
+        // 提交一次commit，获得返回tree根节点的Hash值
+        latestCommit = folder.commit();
     }
 
     public void run() throws Exception {
-        System.out.println("根目录的文件地址：" + latestCommit);
+        filenameStorage.append("根目录的文件地址：").append(latestCommit).append("\n");
         // 根据根节点在.versionManagement下寻找文件
         readTree(latestCommit);
+        System.out.println(filenameStorage.toString());
     }
 
     private void readTree(String filename) throws Exception{
@@ -44,12 +43,12 @@ public class test {
         while(line != null){
             String[] list = line.split(" {2}");
             if(list[0].equals("Blob"))
-                System.out.println("文件名：" + list[2]);  // 如果是文件，就输出文件名
+                filenameStorage.append("文件名：").append(list[2]).append("\n");  // 如果是文件，就输出文件名
             else if(list[0].equals("Tree")){
-                System.out.println("文件夹名："+list[2]);    // 如果是树，就输出文件夹名字
-                System.out.print("{");
+                filenameStorage.append("文件夹名：").append(list[2]).append(" ");    // 如果是树，就输出文件夹名字
+                filenameStorage.append("{").append("\n");
                 readTree(list[1]);  // 递归去深度优先遍历所有的文件
-                System.out.println("}");
+                filenameStorage.append("}").append("\n");
             }
             line = br.readLine();
         }
