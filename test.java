@@ -11,6 +11,9 @@ public class test {
     目前实现功能：根据HEAD文件寻找最新一次Commit，
     然后根据根节点的hash值深度优先遍历整个树结构，
     输出所有的文件夹即文件夹中的文件
+
+    之后同样的深度优先遍历的方式遍历文件夹，得到遍历结果后比较两次是否有差异
+
      */
     private final String strPath;  // 创建git的路径
     private final String filePath; // 用于存储仓库.versionManagement的路径
@@ -41,7 +44,6 @@ public class test {
     private void checkFile(){
         File treeNode = new File(strPath);
         readFolder(treeNode);
-//        System.out.println(filenameCheck.toString());
 
         // 最后检查两次遍历的结果是否相同
         if((filenameCheck.toString().equals(filenameStorage.toString())))
