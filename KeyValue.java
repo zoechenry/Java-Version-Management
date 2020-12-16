@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.HashMap;
 
 public abstract class KeyValue {
 
@@ -91,16 +92,22 @@ public abstract class KeyValue {
         }
     }
 
-    //获取上一次commit的仓库key值
-    protected String getLatestKeyOfHomeFolder(String latestCommit) throws IOException {
+    //获取commit的信息
+    protected String getInfoOfHomeFolder(String latestCommit, String info) throws IOException {
         if (latestCommit == null) {
             return null;//不存在前一次commit则latestHashOfHomeFolder为null
         } else {
             File latestCommitFile = new File(storagePath + "\\" + latestCommit);//打开上一次的commit文件
             InputStreamReader isr = new InputStreamReader(new FileInputStream(latestCommitFile));
             BufferedReader br = new BufferedReader(isr);
-            String[] hashSplit = br.readLine().split(": ");//读取latestHashOfHomeFolder
-            return hashSplit[hashSplit.length - 1];
+            String line = br.readLine();
+            HashMap<String, String> infoSave = new HashMap<String, String>();
+            while(line != null){
+                String[] hashSplit = line.split(": ");//读取latestHashOfHomeFolder
+                infoSave.put(hashSplit[0],hashSplit[hashSplit.length - 1]);
+                line = br.readLine();
+            }
+            return (String) infoSave.get(info);
         }
     }
 
