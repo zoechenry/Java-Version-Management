@@ -1,5 +1,8 @@
 import java.io.File;
 import java.nio.file.NoSuchFileException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class VersionManagement {
 
@@ -38,8 +41,17 @@ public class VersionManagement {
             versionManagement.mkdir();//若还没有创建".versionManagement"文件夹，则创建一个
     }
 
-    public String commit() throws Exception {
+    public LinkedHashMap commit() throws Exception {
         Commit cmt = new Commit(warehouse, storagePath);
-        return cmt.getLatestKeyOfHomeFolder(cmt.getLatestCommit());
+        LinkedHashMap result = new LinkedHashMap<String,String>();
+        String commit_id = cmt.getLatestCommit();
+
+        do {
+            result.put(commit_id,cmt.getInfoOfHomeFolder(commit_id,"hashOfHomeFolder"));
+            System.out.println("Commit ID："+commit_id);
+            commit_id = cmt.getInfoOfHomeFolder(commit_id,"Parent");
+        }while (!commit_id.equals("null"));
+
+        return result;
     }
 }
