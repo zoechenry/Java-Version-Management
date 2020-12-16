@@ -1,23 +1,23 @@
 import java.io.*;
+import java.util.LinkedHashMap;
+import java.util.Scanner;
 
 public class test {
 
     /*
-    该测试类用于测试各个模块是否能正常运行，现在还比较简陋。
-    已经将任务分配给组员，后期会形成集成化的自动检测方法。
-     */
+    目前实现功能：根据HEAD文件寻找所有的Commit，
+    选定一条Commit记录后，
 
-    /*
-    目前实现功能：根据HEAD文件寻找最新一次Commit，
-    然后根据根节点的hash值深度优先遍历整个树结构，
+    根据这条commit记录的根节点hash值深度优先遍历整个树结构，
     输出所有的文件夹即文件夹中的文件
 
-    之后同样的深度优先遍历的方式遍历文件夹，得到遍历结果后比较两次是否有差异
+    之后同样的深度优先遍历的方式遍历文件夹，得到遍历结果后比较两次是否有差异（如果选定的不是最新commit，则验证失败）
 
      */
     private final String strPath;  // 创建git的路径
     private final String filePath; // 用于存储仓库.versionManagement的路径
-    private String latestCommit; // 用于存储最新的提交记录
+    private String commitID; // 用于存储最新的提交记录
+    private String treeRoot; // 用于存放根节点的Hash值
     private StringBuilder filenameStorage; // 用于存储文件与文件夹的名字
     private StringBuilder filenameCheck = new StringBuilder();
 
@@ -29,13 +29,18 @@ public class test {
         // 创建一个.versionManagement文件夹
         VersionManagement folder = new VersionManagement(strPath);
         // 提交一次commit，获得返回tree根节点的Hash值
-        latestCommit = folder.commit();
+        LinkedHashMap commitLog = folder.commit();
+
+        System.out.println("输入Commit ID："); // 写入备注:
+        Scanner input = new Scanner(System.in);
+        commitID = input.nextLine();
+        treeRoot = (String) commitLog.get(commitID);
     }
 
     public void run() throws Exception {
-        System.out.println("根目录的文件地址："+latestCommit);
+        System.out.println("根目录的文件地址："+treeRoot);
         // 根据根节点在.versionManagement下寻找文件
-        readTree(latestCommit);
+        readTree(treeRoot);
         System.out.println(filenameStorage.toString());
 
         checkFile(); // 验证文件完整性
@@ -94,7 +99,7 @@ public class test {
 
     public static void main(String[] args) throws Exception {
         //指定想要创建key-value的文件路径或文件夹路径
-        String hashPath = "E:\\Study\\SSPKU\\面向对象\\12";
+        String hashPath = "C:\\Users\\zrc5\\Desktop\\test";
 
         // 初始化一个test对象
         test newTest = new test(hashPath);
