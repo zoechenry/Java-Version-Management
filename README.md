@@ -191,3 +191,11 @@ commit
   - setWarehouse(String warehousePath)
   - 建立仓库下".versionManagement"文件夹，用于放置创建的key-value文件
 
+
+### 回滚主要思路
+首先链表遍历出所有的commitID，然后选择回滚至其中一个commit，根据这个commit的根目录hash值可以遍历出所有的文件，然后恢复全部的文件
+
+### 分支思路
+所有记录branch的文件都存在了branch文件夹里，名称为分支名，内容记录最新的一次commit，HEAD文件改为记录当前分支名，切换分支时便修改HEAD的值
+
+
