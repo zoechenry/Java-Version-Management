@@ -83,11 +83,15 @@ public abstract class KeyValue {
     //从Head文件中获取最新一次commit的key值
     protected String getLatestCommit() throws IOException {
         File HEADFile = new File(storagePath + "\\HEAD");
+
         if(!HEADFile.exists())
             return null;//Head文件不存在，说明没有parent commit，commitLatest为null
         else{
             InputStreamReader isr = new InputStreamReader(new FileInputStream(HEADFile));
             BufferedReader br = new BufferedReader(isr);
+            File branchFile = new File(storagePath + "\\branch\\" + br.readLine());
+            isr = new InputStreamReader(new FileInputStream(branchFile));
+            br = new BufferedReader(isr);
             return br.readLine();
         }
     }
@@ -111,11 +115,52 @@ public abstract class KeyValue {
         }
     }
 
-    // 更新（创建）HEAD文件，存储这次commit的Key
-    protected void createHead() throws IOException {
-        BufferedWriter headOut = new BufferedWriter(new FileWriter(storagePath + "\\HEAD"));
+    // 更新（创建）branch文件，存储这次commit的Key
+    protected void createBranch(String str) throws IOException {
+        String branchPath =  storagePath + "\\branch";
+        File branch = new File(branchPath);
+        if  (!branch.exists())
+            branch.mkdir();
+
+        BufferedWriter headOut = new BufferedWriter(new FileWriter(storagePath + "\\branch\\" + str));
         headOut.write(getKey());
         headOut.flush();
         headOut.close();
+        createHead(str);
     }
+
+    protected void changeBranch() throws IOException {
+        File HEADFile = new File(storagePath + "\\HEAD");
+        InputStreamReader isr = new InputStreamReader(new FileInputStream(HEADFile));
+        BufferedReader br = new BufferedReader(isr);
+        String str = br.readLine();
+        BufferedWriter branchOut = new BufferedWriter(new FileWriter(storagePath + "\\branch\\" + str));
+        branchOut.write(getKey());
+        branchOut.flush();
+        branchOut.close();
+    }
+
+    protected void Branch() throws IOException {
+        File[] files = new File(storagePath + "\\branch").listFiles();
+        System.out.println("目前已有分支：");
+        for (File f : files)
+            System.out.println(f.getName());
+    }
+
+    // 更新（创建）HEAD文件，存储当前branch
+    protected void createHead(String str) throws IOException {
+        File head = new File(storagePath + "\\HEAD");
+        BufferedWriter headOut = new BufferedWriter(new FileWriter(storagePath + "\\HEAD"));
+        headOut.write(str);
+        headOut.flush();
+        headOut.close();
+    }
+
+    public void checkoutBranch(String branchName) throws IOException {
+        createHead(branchName);
+        System.out.println("切换分支成功");
+    }
+
+
+
 }

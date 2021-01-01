@@ -45,13 +45,11 @@ public class VersionManagement {
         Commit cmt = new Commit(warehouse, storagePath);
         LinkedHashMap result = new LinkedHashMap<String,String>();
         String commit_id = cmt.getLatestCommit();
-
         do {
             result.put(commit_id,cmt.getInfoOfHomeFolder(commit_id,"hashOfHomeFolder"));
-            System.out.println("Commit ID："+commit_id);
+//            System.out.println("Commit ID："+commit_id);
             commit_id = cmt.getInfoOfHomeFolder(commit_id,"Parent");
         }while (!commit_id.equals("null"));
-
         return result;
     }
 }

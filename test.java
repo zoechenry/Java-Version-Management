@@ -25,11 +25,13 @@ public class test {
     public test(String storagePath) throws Exception {
         strPath = storagePath;
         filenameStorage = new StringBuilder();
-        filePath = strPath + "\\.versionManagement";;
+        filePath = strPath + "\\.versionManagement";
         // 创建一个.versionManagement文件夹
         VersionManagement folder = new VersionManagement(strPath);
         // 提交一次commit，获得返回tree根节点的Hash值
         LinkedHashMap commitLog = folder.commit();
+
+        System.out.println("Commit ID：" + commitLog.keySet());
 
         System.out.println("输入Commit ID："); // 写入备注:
         Scanner input = new Scanner(System.in);
@@ -43,7 +45,7 @@ public class test {
         readTree(treeRoot);
         System.out.println(filenameStorage.toString());
 
-        checkFile(); // 验证文件完整性
+//        checkFile(); // 验证文件完整性
     }
 
     private void checkFile(){
@@ -65,13 +67,14 @@ public class test {
         String line = br.readLine();
         while(line != null){
             String[] list = line.split(" {2}");
-            if(list[0].equals("Blob"))
+            if(list[0].equals("Blob")){
                 filenameStorage.append("文件名：").append(list[2]).append("\n");  // 如果是文件，就输出文件名
+            }
             else if(list[0].equals("Tree")){
                 filenameStorage.append("文件夹名：").append(list[2]).append(" ");    // 如果是树，就输出文件夹名字
-                filenameStorage.append("{").append("\n");
+//                filenameStorage.append("{").append("\n");
                 readTree(list[1]);  // 递归去深度优先遍历所有的文件
-                filenameStorage.append("}").append("\n");
+//                filenameStorage.append("}").append("\n");
             }
             line = br.readLine();
         }
