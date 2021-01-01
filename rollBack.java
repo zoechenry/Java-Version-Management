@@ -9,38 +9,43 @@ public class rollBack {
     选定一条Commit记录后，
 
     根据这条commit记录的根节点hash值深度优先遍历整个树结构，
-    输出所有的文件夹即文件夹中的文件
-
-
+    恢复所有的文件夹及文件夹中的文件
      */
-    private final String strPath;  // 创建git的路径
     private final String filePath; // 用于存储仓库.versionManagement的路径
+    private LinkedHashMap commitLog;
+    private final String storagePath;
+    private final String commitID;
 
 
     // 初始化rollBack对象时，保证有一次最新的提交
-    public rollBack(LinkedHashMap commitLog, String commitID, String storagePath) throws Exception {
-        strPath = storagePath;
-        filePath = strPath + "\\.versionManagement";
+    public rollBack(String path) throws Exception {
+        storagePath = path;
+        filePath = storagePath + "\\.versionManagement";
+
+        commitLog();
+        System.out.println("输入Commit ID：");
+        Scanner input = new Scanner(System.in);
+        commitID = input.nextLine();
 
         // 文件夹非空，先删除文件
-        File[] files = new File(strPath).listFiles();
+        File[] files = new File(storagePath).listFiles();
         for (File f: files){
             if (!f.getName().equals(".versionManagement"))
                 deleteFolder(f);
         }
-
         String treeRoot = (String) commitLog.get(commitID);
         // 根据根节点在.versionManagement下寻找文件
-        rb(treeRoot, strPath);
+        rb(treeRoot, storagePath);
         // 最后头指针存的commit值要变
-        changeHead(commitID);
+        changeBranch(commitID);
     }
 
-    private void changeHead(String commitID) throws IOException {
-        BufferedWriter headOut = new BufferedWriter(new FileWriter(filePath + "\\HEAD"));
-        headOut.write(commitID);
-        headOut.flush();
-        headOut.close();
+    public void commitLog() throws Exception {
+        // 创建一个.versionManagement文件夹
+        VersionManagement folder = new VersionManagement(storagePath);
+        // 提交一次commit，获得返回tree根节点的Hash值
+        commitLog = folder.commit();
+        System.out.println("Commit ID：" + commitLog.keySet());
     }
 
     private void rb(String filename, String recursivePath) throws Exception{
@@ -52,9 +57,6 @@ public class rollBack {
         while(line != null){
             String[] list = line.split(" {2}");
             if(list[0].equals("Blob")){
-//                System.out.println("文件名："+list[2]);  // 如果是文件，就输出文件名
-//                System.out.println("文件的值："+list[1]);  // 如果是文件，就输出文件名
-//                System.out.println("文件的存储路径："+ recursivePath +"\n");
                 FileInputStream is = new FileInputStream(filePath+"\\"+list[1]);
                 FileOutputStream os = new FileOutputStream(recursivePath+"\\"+list[2]);
                 byte[] buffer = new byte[1024];
@@ -78,7 +80,18 @@ public class rollBack {
         }
     }
 
-    public void deleteFolder(File folder) throws Exception {
+    protected void changeBranch(String newKey) throws IOException {
+        File HEADFile = new File(filePath + "\\HEAD");
+        InputStreamReader isr = new InputStreamReader(new FileInputStream(HEADFile));
+        BufferedReader br = new BufferedReader(isr);
+        String str = br.readLine();
+        BufferedWriter branchOut = new BufferedWriter(new FileWriter(filePath + "\\branch\\" + str));
+        branchOut.write(newKey);
+        branchOut.flush();
+        branchOut.close();
+    }
+
+    private void deleteFolder(File folder) throws Exception {
         if (!folder.exists()) {
             throw new Exception("文件不存在");
         }
@@ -99,17 +112,6 @@ public class rollBack {
     public static void main(String[] args) throws Exception {
         //指定想要创建key-value的文件路径或文件夹路径
         String hashPath = "C:\\Users\\zrc5\\Desktop\\test";
-
-        // 创建一个.versionManagement文件夹
-        VersionManagement folder = new VersionManagement(hashPath);
-        // 提交一次commit，获得返回tree根节点的Hash值
-        LinkedHashMap commitLog = folder.commit();
-
-        System.out.println("Commit ID：" + commitLog.keySet());
-        System.out.println("输入Commit ID："); // 写入备注:
-        Scanner input = new Scanner(System.in);
-        String commitID = input.nextLine();
-
-        rollBack newTest = new rollBack(commitLog, commitID, hashPath);
+        rollBack newTest = new rollBack(hashPath);
     }
 }
