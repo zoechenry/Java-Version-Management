@@ -84,8 +84,9 @@ public abstract class KeyValue {
     protected String getLatestCommit() throws IOException {
         File HEADFile = new File(storagePath + "\\HEAD");
 
-        if(!HEADFile.exists())
-            return null;//Head文件不存在，说明没有parent commit，commitLatest为null
+        if(!HEADFile.exists()){
+            return null;
+        }
         else{
             InputStreamReader isr = new InputStreamReader(new FileInputStream(HEADFile));
             BufferedReader br = new BufferedReader(isr);
@@ -123,10 +124,14 @@ public abstract class KeyValue {
             branch.mkdir();
 
         BufferedWriter headOut = new BufferedWriter(new FileWriter(storagePath + "\\branch\\" + str));
-        headOut.write(getKey());
+        if (str.equals("Main"))
+            headOut.write(getKey());
+        else{
+            headOut.write(getLatestCommit());
+        }
+        System.out.println("创建分支"+ str +"成功！");
         headOut.flush();
         headOut.close();
-        createHead(str);
     }
 
     protected void changeBranch() throws IOException {
@@ -145,6 +150,11 @@ public abstract class KeyValue {
         System.out.println("目前已有分支：");
         for (File f : files)
             System.out.println(f.getName());
+        File HEADFile = new File(storagePath + "\\HEAD");
+        InputStreamReader isr = new InputStreamReader(new FileInputStream(HEADFile));
+        BufferedReader br = new BufferedReader(isr);
+        String str = br.readLine();
+        System.out.println("当前所在分支：" + str);
     }
 
     // 更新（创建）HEAD文件，存储当前branch
@@ -156,11 +166,13 @@ public abstract class KeyValue {
         headOut.close();
     }
 
-    public void checkoutBranch(String branchName) throws IOException {
-        createHead(branchName);
-        System.out.println("切换分支成功");
+    public boolean checkoutBranch(String branchName) throws IOException {
+        File[] files = new File(storagePath + "\\branch").listFiles();
+        for (File f : files)
+            if (f.getName().equals(branchName)){
+                createHead(branchName);
+                return true;
+            }
+        return false;
     }
-
-
-
 }

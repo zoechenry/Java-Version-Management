@@ -22,13 +22,15 @@ public class Commit extends KeyValue {
             createKeyValue(value);
             if (getLatestCommit() == null){
                 createBranch("Main");  // 更新（创建）HEAD文件，存储这次commit的Key
+                createHead("Main");
             }
             else{
                 changeBranch();
             }
             System.out.println("更新成功！");
-        } else
-            System.out.println("无变化，不进行更新！");
+        } else {
+//            System.out.println("无变化，不进行更新！");
+        }
     }
 
     // 判断该次的commit是否合法，及和上次相比HashOfHomeFolder是否有变化
