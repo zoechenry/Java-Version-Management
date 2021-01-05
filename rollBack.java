@@ -11,10 +11,10 @@ public class rollBack {
     根据这条commit记录的根节点hash值深度优先遍历整个树结构，
     恢复所有的文件夹及文件夹中的文件
      */
-    private final String filePath; // 用于存储仓库.versionManagement的路径
+    private String filePath; // 用于存储仓库.versionManagement的路径
     private LinkedHashMap commitLog;
-    private final String storagePath;
-    private final String commitID;
+    private String storagePath;
+    private String commitID;
 
 
     // 初始化rollBack对象时，保证有一次最新的提交
@@ -26,6 +26,11 @@ public class rollBack {
         System.out.println("输入Commit ID：");
         Scanner input = new Scanner(System.in);
         commitID = input.nextLine();
+        if (!commitLog.containsKey(commitID)){
+            System.out.println("commitID 不正确！");
+            return;
+        }
+        String treeRoot = (String) commitLog.get(commitID);
 
         // 文件夹非空，先删除文件
         File[] files = new File(storagePath).listFiles();
@@ -33,11 +38,11 @@ public class rollBack {
             if (!f.getName().equals(".versionManagement"))
                 deleteFolder(f);
         }
-        String treeRoot = (String) commitLog.get(commitID);
         // 根据根节点在.versionManagement下寻找文件
         rb(treeRoot, storagePath);
         // 最后头指针存的commit值要变
         changeBranch(commitID);
+        System.out.println("回滚完成！");
     }
 
     public void commitLog() throws Exception {
@@ -107,11 +112,5 @@ public class rollBack {
             }
         }
         folder.delete();
-    }
-
-    public static void main(String[] args) throws Exception {
-        //指定想要创建key-value的文件路径或文件夹路径
-        String hashPath = "C:\\Users\\zrc5\\Desktop\\test";
-        rollBack newTest = new rollBack(hashPath);
     }
 }
