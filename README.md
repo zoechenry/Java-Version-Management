@@ -1,6 +1,3 @@
-# Version-Management
-Java课程项目：实现一个简单的版本管理工具
-
 ## 项目要求
 
 - 命令行工具
@@ -9,7 +6,7 @@ Java课程项目：实现一个简单的版本管理工具
 **功能点：**
 
 1. 可以提交commit，可以进行“git log”查看commit历史
-2. 可以进行“git rollback”回滚到指定commit
+2. 可以进行“git reset”回滚到指定commit
 3. 可创建多分支，可在分支之间切换
 4. 可考虑merge功能、远程仓库功能
 
@@ -61,7 +58,7 @@ Java课程项目：实现一个简单的版本管理工具
 
   1. Blob：文件
      -  Blob的Value：文件内容（不包含文件名）
-     - Blob的Key：文件内容的hash值
+     -  Blob的Key：文件内容的hash值
 
   2. Tree：文件夹
      - Tree的Value：1.子文件夹和子文件名称；2.每个子文件Blob key；3.每个子文件夹tree的key；
@@ -102,6 +99,7 @@ Java课程项目：实现一个简单的版本管理工具
 实现key-value存储
 
 - 计算出key值
+
   - getKey()
   - 调用Hash类里的getHashValue()方法
   - 返回值为16进制字符串hash值
@@ -173,23 +171,28 @@ commit
 
 - 判断commit是否有变化
   -  isValidCommit()
-  - 调用getLatestKeyOfHomeFolder()方法获取根文件夹的hash值
-  - 通过Tree类获取当前仓库的key值
-  - 将根文件夹的hash值与当前仓库的key值进行比较
+  -  调用getLatestKeyOfHomeFolder()方法获取根文件夹的hash值
+  -  通过Tree类获取当前仓库的key值
+  -  将根文件夹的hash值与当前仓库的key值进行比较
 - 若commit值有变化，进行更新
   - updateValue()  更新commit的value值
-  -  createKeyValue()     创建最新commit的key-value文件
-  -  createHead();     更新（创建）HEAD文件，存储这次commit的Key
+  - createKeyValue()     创建最新commit的key-value文件
+  - createHead();     更新（创建）HEAD文件，存储这次commit的Key
 
 
 
-### 6. version management
+### 6. version managemen
 
 接入对仓库的操作
 
 - 建立仓库
   - setWarehouse(String warehousePath)
   - 建立仓库下".versionManagement"文件夹，用于放置创建的key-value文件
+
+
+
+
+
 
 
 ### 分支管理与切换
@@ -204,11 +207,15 @@ commit
 
 - 实现步骤
 
-  - 创建一个名为branch的文件夹，文件夹中记录各个branch的信息
-  - 每新建一个分支，在branch文件夹中增加一个以该分支名命名的文件，将最新commit的值写入对应的分支文件中
-  - 找到branch文件夹中要切换到的分支对应的文件，读出其中最新的commit的key
-  - 把commit对应的根目录tree对象恢复成文件夹
-  - 修改HEAD的值为最新的commit的key
+  - 把原本的HEAD指针改为branch，名称为分支的名称
+
+  - 所有记录branch的文件都存在了branch文件夹里，名称为分支名，内容记录最新的一次commit。
+
+  - 然后再用一个HEAD指针指向当前的分支，切换分支时便修改HEAD的值
+
+    
+
+  ![图片 1](/Users/zoechen/Downloads/%E5%9B%BE%E7%89%87%201.png)
 
 
 
@@ -236,27 +243,71 @@ commit
 
 ### 命令行交互
 
-- 要实现的命令
+- 具体实现
 
-  - git commit  提交
-
-  - git branch 查看当前已存在的branch
-
-    通过遍历branch文件夹实现
-
-  - git checkout branchname 
-
-    切换到branchname分支
-
-  - git log 
-
-    - 查看当前commit历史记录
-
-  - git rollback commitID 
-
-    回滚到对应的commit
-
-- 两种实现
-
-  - Scanner接收用户指令
   - 通过main函数命令行参数String[] args接收用户指令
+
+- 编译
+
+  首先在程序文件夹下编译所有的程序：
+
+  ` javac -encoding UTF-8 *.java`
+
+- 设置环境变量
+
+  - 在系统变量中添加 
+
+    变量名：CLASSPATH
+
+    变量值：.class文件所在的路径
+
+    保证.class在任意目录下都能运行
+
+    ![](/Users/zoechen/Downloads/%E5%9B%BE%E7%89%87%202.png)
+
+- 程序运行
+
+  - 建立仓库（初始化）
+
+    切换到需要建立仓库的文件夹，运行下面的语句建立仓库（初始化）
+
+    ` java gitCommand init`
+
+    ![](/Users/zoechen/Downloads/1.png).
+
+  - commit 功能
+
+    ` java gitCommand commit`
+
+    ![22](/Users/zoechen/Downloads/22.png).
+
+  - 查看分支
+
+    ` java gitCommand branch`
+
+    ![3](/Users/zoechen/Downloads/3.png).
+
+  - 创建新分支
+
+    ` java gitCommand branch 分支名`
+
+    ![4](/Users/zoechen/Downloads/4.png).
+
+  - 切换分支
+
+    ` java gitCommand checkout 分支名`
+
+
+  - 查看commit记录
+
+    ` java gitCommand log`
+
+
+  - 回滚功能
+
+    ` java gitCommand rollback`
+
+ 
+
+    
+
