@@ -248,8 +248,6 @@ commit
 
     切换到branchname分支
 
-    若不存在，创建名为branchname的新分支
-
   - git log 
 
     - 查看当前commit历史记录
