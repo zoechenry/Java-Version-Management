@@ -9,7 +9,7 @@ Java课程项目：实现一个简单的版本管理工具
 **功能点：**
 
 1. 可以提交commit，可以进行“git log”查看commit历史
-2. 可以进行“git reset”回滚到指定commit
+2. 可以进行“git rollback”回滚到指定commit
 3. 可创建多分支，可在分支之间切换
 4. 可考虑merge功能、远程仓库功能
 
@@ -183,7 +183,7 @@ commit
 
 
 
-### 6. version managemen
+### 6. version management
 
 接入对仓库的操作
 
@@ -254,7 +254,7 @@ commit
 
     - 查看当前commit历史记录
 
-  - git reset --hard commit 
+  - git rollback commitID 
 
     回滚到对应的commit
 
