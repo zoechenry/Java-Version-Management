@@ -17,7 +17,10 @@ public class Tree extends KeyValue {
         createKeyValue(value);
     }
 
-    //更新Tree的value
+    /**
+     * 更新Tree的value
+     * @throws Exception
+     */
     private void updateValue()throws Exception{
         value = new StringBuilder();
         File[] files = inputFile.listFiles();
@@ -28,7 +31,11 @@ public class Tree extends KeyValue {
         }
     }
 
-    //更新value条目
+    /**
+     * 更新value条目
+     * @param f
+     * @throws Exception
+     */
     private void updateEntry(File f)throws Exception{
         if (f.isFile()) {
             value.append("Blob  ");//子项是文件，条目类型为Blob

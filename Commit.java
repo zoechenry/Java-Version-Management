@@ -33,7 +33,11 @@ public class Commit extends KeyValue {
         }
     }
 
-    // 判断该次的commit是否合法，及和上次相比HashOfHomeFolder是否有变化
+    /**
+     * 判断该次的commit是否合法，及和上次相比HashOfHomeFolder是否有变化
+     * @return
+     * @throws Exception
+     */
     private boolean isValidCommit() throws Exception {
         latestCommit = getLatestCommit();
         String latestKeyOfHomeFolder = getInfoOfHomeFolder(latestCommit,"hashOfHomeFolder");//获取上一次commit的仓库key值
@@ -41,7 +45,9 @@ public class Commit extends KeyValue {
         return !hashOfHomeFolder.equals(latestKeyOfHomeFolder);
     }
 
-    //更新commit的value
+    /**
+     * 更新commit的value
+     */
     private void updateValue(){
         value = new StringBuilder();
         System.out.println("请输入备注："); // 写入备注:

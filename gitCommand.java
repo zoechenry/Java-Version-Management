@@ -13,54 +13,62 @@ public class gitCommand extends KeyValue{
         filePath = Path;
     }
 
+    /**
+     * 用于处理输入的参数，执行对应的指令
+     * @param args
+     * @throws Exception
+     */
     private void commandLine(String[] args) throws Exception {
-        if (args[0].equals("init")){
-            init();
-        }
-        else if (args[0].equals("commit")){
-            // 提交一次commit
-            folder = new VersionManagement(filePath);
-            folder.commit();
-            System.out.println("Commit 完成");
-        }
-        else if (args[0].equals("log")){
-            // 查看提交记录
-            folder = new VersionManagement(filePath);
-            LinkedHashMap commitLog = folder.commit();
-            System.out.println("Commit ID：" + commitLog.keySet());
-        }
-        else if (args[0].equals("rollback")){
-            rollBack rb = new rollBack(filePath);
-        }
-        else if (args[0].equals("branch")){
-            if (args.length==1){
-                Branch();
-            }
-            else{
-                createBranch(args[1]);
-            }
-        }
-        else if (args[0].equals("checkout")){
-            if (checkoutBranch(args[1])){
-                System.out.println("切换分支成功");
-            }else{
-                System.out.println("切换分支失败");
-            }
-        }else{
-            System.out.println("请输入正确的指令！");
+        switch (args[0]) {
+            case "init":
+                // 初始化，建立仓库
+                folder = new VersionManagement(filePath);
+                break;
+            case "commit":
+                // 提交一次commit
+                folder = new VersionManagement(filePath);
+                folder.commit();
+                System.out.println("Commit 完成");
+                break;
+            case "log":
+                // 查看提交记录
+                folder = new VersionManagement(filePath);
+                LinkedHashMap commitLog = folder.commit();
+                System.out.println("Commit ID：" + commitLog.keySet());
+                break;
+            case "rollback":
+                // 回滚
+                rollBack rb = new rollBack(filePath);
+                break;
+            case "branch":
+                // 输入只有branch的话是查看分支，branch后加名称是创建新的分支
+                if (args.length == 1) {
+                    Branch();
+                } else {
+                    createBranch(args[1]);
+                }
+                break;
+            case "checkout":
+                // 根据输入的名字切换分支
+                if (checkoutBranch(args[1])) {
+                    System.out.println("切换分支成功");
+                } else {
+                    System.out.println("切换分支失败");
+                }
+                break;
+            default:
+                System.out.println("请输入正确的指令！");
+                break;
         }
     }
 
-    private void init() throws Exception {
-        folder = new VersionManagement(filePath);
-        System.out.println("初始化成功！");
-    }
 
     public static void main(String[] args) throws Exception {
-        String currentPath = new java.io.File( "." ).getCanonicalPath();
+        String currentPath = new java.io.File( "." ).getCanonicalPath();    // 获取当前工作路径
         String vmPath = currentPath + "\\.versionManagement";
         gitCommand task = new gitCommand(new File(currentPath), vmPath, currentPath);
 
+        // 判断是否输入参数
         if (args.length == 0)
             System.out.println("请输入指令！");
         else

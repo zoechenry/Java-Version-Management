@@ -16,8 +16,11 @@ public class rollBack {
     private String storagePath;
     private String commitID;
 
-
-    // 初始化rollBack对象时，保证有一次最新的提交
+    /**
+     * 初始化rollBack对象时，保证有一次最新的提交
+     * @param path
+     * @throws Exception
+     */
     public rollBack(String path) throws Exception {
         storagePath = path;
         filePath = storagePath + "\\.versionManagement";
@@ -45,6 +48,10 @@ public class rollBack {
         System.out.println("回滚完成！");
     }
 
+    /**
+     * 获取commit记录
+     * @throws Exception
+     */
     public void commitLog() throws Exception {
         // 创建一个.versionManagement文件夹
         VersionManagement folder = new VersionManagement(storagePath);
@@ -53,6 +60,12 @@ public class rollBack {
         System.out.println("Commit ID：" + commitLog.keySet());
     }
 
+    /**
+     * 递归恢复文件
+     * @param filename
+     * @param recursivePath
+     * @throws Exception
+     */
     private void rb(String filename, String recursivePath) throws Exception{
         String filenamePath = filePath +"\\"+ filename;
         File treeNode = new File(filenamePath);
@@ -85,6 +98,11 @@ public class rollBack {
         }
     }
 
+    /**
+     * 更改当前分支的commitID
+     * @param newKey
+     * @throws IOException
+     */
     protected void changeBranch(String newKey) throws IOException {
         File HEADFile = new File(filePath + "\\HEAD");
         InputStreamReader isr = new InputStreamReader(new FileInputStream(HEADFile));
@@ -96,6 +114,11 @@ public class rollBack {
         branchOut.close();
     }
 
+    /**
+     * 删除该文件夹下的所有文件
+     * @param folder
+     * @throws Exception
+     */
     private void deleteFolder(File folder) throws Exception {
         if (!folder.exists()) {
             throw new Exception("文件不存在");
