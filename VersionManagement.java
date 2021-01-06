@@ -15,6 +15,11 @@ public class VersionManagement {
     private File warehouse;
     private String storagePath;
 
+    /**
+     * 初始化仓库
+     * @param warehousePath
+     * @throws Exception
+     */
     public VersionManagement(String warehousePath) throws Exception {
         warehouse = new File(warehousePath);
         if (!warehouse.exists()||!warehouse.isDirectory())//若是无效的仓库路径，则抛出异常
@@ -22,8 +27,10 @@ public class VersionManagement {
 
         storagePath = warehousePath+"\\.versionManagement";
         File versionManagement = new File(storagePath);
-        if  (!versionManagement.exists())
+        if  (!versionManagement.exists()){
             versionManagement.mkdir();//若还没有创建".versionManagement"文件夹，则创建一个
+            System.out.println("初始化成功");
+        }
     }
 
     public File getWarehouse() {
@@ -41,6 +48,11 @@ public class VersionManagement {
             versionManagement.mkdir();//若还没有创建".versionManagement"文件夹，则创建一个
     }
 
+    /**
+     * 提交一次commit，返回遍历commit记录的链表
+     * @return LinkedHashMap
+     * @throws Exception
+     */
     public LinkedHashMap commit() throws Exception {
         Commit cmt = new Commit(warehouse, storagePath);
         LinkedHashMap result = new LinkedHashMap<String,String>();

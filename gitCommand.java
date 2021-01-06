@@ -13,11 +13,16 @@ public class gitCommand extends KeyValue{
         filePath = Path;
     }
 
+    /**
+     * 用于处理输入的参数，执行对应的指令
+     * @param args
+     * @throws Exception
+     */
     private void commandLine(String[] args) throws Exception {
         switch (args[0]) {
             case "init":
                 // 初始化，建立仓库
-                init();
+                folder = new VersionManagement(filePath);
                 break;
             case "commit":
                 // 提交一次commit
@@ -53,14 +58,10 @@ public class gitCommand extends KeyValue{
                 break;
             default:
                 System.out.println("请输入正确的指令！");
-//                break;
+                break;
         }
     }
 
-    private void init() throws Exception {
-        folder = new VersionManagement(filePath);
-        System.out.println("初始化成功！");
-    }
 
     public static void main(String[] args) throws Exception {
         String currentPath = new java.io.File( "." ).getCanonicalPath();    // 获取当前工作路径

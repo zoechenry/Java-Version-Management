@@ -18,7 +18,11 @@ public class Hash {
         return hashValue;//获取hash值
     }
 
-    //计算Blob的hash
+    /**
+     * 计算Blob的hash
+     * @param inputFile
+     * @throws Exception
+     */
     public void setHashValue(File inputFile) throws Exception{
         FileInputStream is = new FileInputStream(inputFile);
         MessageDigest complete = MessageDigest.getInstance("SHA-1");//创建MessageDigest用于计算hash值
@@ -33,7 +37,11 @@ public class Hash {
         setHashValue(complete);
     }
 
-    //从StringBuilder中计算hash值
+    /**
+     * 从StringBuilder中计算hash值
+     * @param value
+     * @throws NoSuchAlgorithmException
+     */
     public void setHashValue(StringBuilder value) throws NoSuchAlgorithmException {
         byte[] buffer = value.toString().getBytes();
         MessageDigest complete = MessageDigest.getInstance("SHA-1");//创建MessageDigest用于计算hash值
@@ -41,7 +49,10 @@ public class Hash {
         setHashValue(complete);
     }
 
-    //将消息队列中的hash值取出
+    /**
+     * 将消息队列中的hash值取出
+     * @param complete
+     */
     private void setHashValue(MessageDigest complete){
         StringBuilder result = new StringBuilder();
         for (byte b : complete.digest()) {

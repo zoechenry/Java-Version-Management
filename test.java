@@ -3,16 +3,14 @@ import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 public class test {
-
-    /*
-    目前实现功能：根据HEAD文件寻找所有的Commit，
-    选定一条Commit记录后，
-
-    根据这条commit记录的根节点hash值深度优先遍历整个树结构，
-    输出所有的文件夹即文件夹中的文件
-
-    之后同样的深度优先遍历的方式遍历文件夹，得到遍历结果后比较两次是否有差异（如果选定的不是最新commit，则验证失败）
-
+    /**
+     *     目前实现功能：根据HEAD文件寻找所有的Commit，
+     *     选定一条Commit记录后，
+     *
+     *     根据这条commit记录的根节点hash值深度优先遍历整个树结构，
+     *     输出所有的文件夹即文件夹中的文件
+     *
+     *     之后同样的深度优先遍历的方式遍历文件夹，得到遍历结果后比较两次是否有差异（如果选定的不是最新commit，则验证失败）
      */
     private final String strPath;  // 创建git的路径
     private final String filePath; // 用于存储仓库.versionManagement的路径
@@ -21,7 +19,11 @@ public class test {
     private StringBuilder filenameStorage; // 用于存储文件与文件夹的名字
     private StringBuilder filenameCheck = new StringBuilder();
 
-    // 初始化test对象时，保证有一次最新的提交
+    /**
+     * 初始化test对象时，保证有一次最新的提交
+     * @param storagePath
+     * @throws Exception
+     */
     public test(String storagePath) throws Exception {
         strPath = storagePath;
         filenameStorage = new StringBuilder();
@@ -45,20 +47,27 @@ public class test {
         readTree(treeRoot);
         System.out.println(filenameStorage.toString());
 
-//        checkFile(); // 验证文件完整性
+        checkFile(); // 验证文件完整性
     }
 
+    /**
+     * 检查两次遍历的结果是否相同
+     */
     private void checkFile(){
         File treeNode = new File(strPath);
         readFolder(treeNode);
 
-        // 最后检查两次遍历的结果是否相同
         if((filenameCheck.toString().equals(filenameStorage.toString())))
             System.out.println("验证成功！");
         else
             System.out.println("验证失败！");
     }
 
+    /**
+     * 递归读取文件
+     * @param filename
+     * @throws Exception
+     */
     private void readTree(String filename) throws Exception{
         String filenamePath = filePath +"\\"+ filename;
         File treeNode = new File(filenamePath);
@@ -80,7 +89,10 @@ public class test {
         }
     }
 
-    // 深度优先遍历（相同的遍历方式）文件夹内的文件，结果存在filenameCheck中
+    /**
+     * 深度优先遍历（相同的遍历方式）文件夹内的文件，结果存在filenameCheck中
+     * @param file
+     */
     private void readFolder(File file){
         File[] files = file.listFiles();
         if(files!=null) {

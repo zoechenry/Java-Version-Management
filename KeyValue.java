@@ -157,7 +157,11 @@ public abstract class KeyValue {
         System.out.println("当前所在分支：" + str);
     }
 
-    // 更新（创建）HEAD文件，存储当前branch
+    /**
+     * 更新（创建）HEAD文件，存储当前branch
+     * @param str
+     * @throws IOException
+     */
     protected void createHead(String str) throws IOException {
         File head = new File(storagePath + "\\HEAD");
         BufferedWriter headOut = new BufferedWriter(new FileWriter(storagePath + "\\HEAD"));
