@@ -20,13 +20,6 @@ public class Commit extends KeyValue {
         if (isValidCommit()) {//判断此次commit是否合法
             updateValue();//更新commit的value
             createKeyValue(value);
-            if (getLatestCommit() == null){
-                createBranch("Main");  // 更新（创建）HEAD文件，存储这次commit的Key
-                createHead("Main");
-            }
-            else{
-                changeBranch();
-            }
             System.out.println("更新成功！");
         } else {
 //            System.out.println("无变化，不进行更新！");
@@ -38,7 +31,7 @@ public class Commit extends KeyValue {
      * @return
      * @throws Exception
      */
-    private boolean isValidCommit() throws Exception {
+    protected boolean isValidCommit() throws Exception {
         latestCommit = getLatestCommit();
         String latestKeyOfHomeFolder = getInfoOfHomeFolder(latestCommit,"hashOfHomeFolder");//获取上一次commit的仓库key值
         hashOfHomeFolder = new Tree(inputFile,storagePath).getKey();//获取当前的仓库key值

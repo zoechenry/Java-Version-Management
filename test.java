@@ -29,9 +29,10 @@ public class test {
         filenameStorage = new StringBuilder();
         filePath = strPath + "\\.versionManagement";
         // 创建一个.versionManagement文件夹
-        VersionManagement folder = new VersionManagement(strPath);
+        File warehouse = new File(storagePath);
+        branch br = new branch("Main", warehouse, strPath);
         // 提交一次commit，获得返回tree根节点的Hash值
-        LinkedHashMap commitLog = folder.commit();
+        LinkedHashMap commitLog = br.commitLog();
 
         System.out.println("Commit ID：" + commitLog.keySet());
 
