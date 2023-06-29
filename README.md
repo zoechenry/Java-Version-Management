@@ -1,2 +1,3 @@
 # Java-Version-Management
-Java课程项目：实现一个简单的版本管理工具
+
+Java Course Project: Implementation of a Simple Version Control Tool 
